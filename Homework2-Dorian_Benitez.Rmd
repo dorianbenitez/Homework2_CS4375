@@ -1,0 +1,183 @@
+---
+title: "Homework2"
+Author: Dorian Benitez (drb160130)
+Purpose: CS 4375.501
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# STEP 1
+
+```{r step1}
+library('ISLR') 
+names(Auto)
+summary(Auto)
+set.seed(1234)
+i <- sample(1:nrow(Auto), nrow(Auto)*0.75, replace=FALSE)
+train <- Auto[i,]
+test <- Auto[-i,]
+```
+
+
+# STEP 2
+
+```{r step2}
+lm1 <- lm(formula = mpg ~ horsepower, data=train)
+summary(lm1)
+pred <- predict(lm1, newdata= test)
+mse <- mean((pred - lm1$residuals)^2)
+print(paste("MSE: ", mse))
+```
+
+
+# STEP 3
+
+a.  train$mpg = 195.840212447928 + -3.91619589169123 * train$horsepower
+b.  Yes, there is a strong relationship between horsepower and mpg.
+c.  There is a positive correlation
+d.  The average error of the model is about 5 gm. The R^2 is at .6136, which makes this model decent for the data. The F-statistic shows that we can have confidence in teh model used. 
+e.  The MSE value is quite high, showing that there is a lot of error within the data model.
+
+------------------------------------
+
+
+# STEP 4
+
+The data does not fit the line very well, and the predicted value also accurately represents the data model.
+
+```{r step4} 
+plot(train$mpg~train$horsepower, xlab="Horsepower", ylab = "MPG")
+abline(lm1, col="blue")
+predict1 <- predict(lm1, data.frame(horsepower = 98))
+print(paste(predict1))
+```
+
+
+
+# STEP 5
+
+There is a good correlation between the predicted and mpg values of the test data being used. 
+
+```{r step5}
+correlation <- cor(pred, test$mpg)
+print(paste("Correlation: ", correlation))
+mse2 <- mean((pred - test$mpg)^2)
+print(paste("MSE: ", mse2))
+```
+
+
+
+
+# STEP 6
+
+Yes, there is evidence of non-linearity from the residuals.
+
+```{r step6}
+par(mfrow=c(2,2))
+plot(lm1)
+```
+
+
+# STEP 7
+
+```{r step5}
+lm2 <- lm(formula = log(mpg) ~ horsepower, data=train)
+summary(lm2)
+```
+
+
+
+
+# STEP 8
+
+The line fits the data as it should, but there is much error to be found from the data model being used. 
+
+```{r step5}
+plot(formula = log(mpg) ~ horsepower, data=train)
+abline(lm2, col="blue")
+```
+
+
+
+
+# STEP 9
+
+```{r step5}
+pred2 <- predict(lm2, newdata=test)
+correlation2 <- cor(pred2, log(test$mpg))
+mse2 <- mean(pred2 - log(test$mpg)^2)
+print(paste("MSE: ", mse2))
+```
+
+
+# STEP 10
+
+The second linear model is more linear with its values than the previous model.
+
+```{r step5}
+par(mfrow=c(2,2))
+plot(lm2)
+```
+
+
+
+
+
+
+
+
+#####----------- PART 2 -----------#################
+
+
+# Step 1
+
+```{r step11}
+pairs(Auto)
+```
+
+
+# Step 2
+Displacement and Cylinders, weight and displacement 
+
+
+```{r step12}
+Auto$name <- NULL
+cor(Auto, method=c("pearson"))
+```
+
+# Step 3
+
+
+```{r step13}
+origin <- factor(Auto$origin)
+lm3 <- lm(formula = 
+            mpg~cylinders+displacement+horsepower+weight+acceleration+year+origin,
+          data=train)
+summary(lm3)
+```
+
+
+# Step 4
+
+```{r step14}
+par(mfrow=c(2,2))
+plot(lm3)
+train[14,]
+```
+
+
+# Step 5
+
+
+```{r step15}
+lm.fit <- lm(mpg~horsepower + displacement + horsepower * displacement, data=train)
+summary(lm.fit)
+anova(lm3, lm.fit)
+```
+
+
+
+
+
